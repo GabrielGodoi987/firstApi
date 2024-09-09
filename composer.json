@@ -1,0 +1,17 @@
+{
+    "name": "homework/firstapi",
+    "description": "First Api using php, this task was proposed by Rodrigo Fautino, my teacher",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Homework\\Firstapi\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "GanbrielGodoi390",
+            "email": "110495432+GabrielGodoi987@users.noreply.github.com"
+        }
+    ],
+    "require": {}
+}
