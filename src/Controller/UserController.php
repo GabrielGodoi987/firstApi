@@ -2,42 +2,87 @@
 
 namespace Homework\Firstapi\Controller;
 
+use Homework\Firstapi\Repository\UserRepository;
+use Homework\Firstapi\Model\User;
+
 class UserController
 {
-    private $users = [
-        [
-            "id" => 1,
-            "name" => "Gabriel Godoi",
-            "age" => 20,
-            "currentJob" => "Full-stack developer"
-        ]
-    ];
-    public function getUsers()
+    private $userRepository;
+
+    public function __construct()
     {
-        return $this->users;
+        $this->userRepository = new UserRepository();
+    }
+    public function getAllUsers()
+    {
+        $users = $this->userRepository->getAllUsers();
+        $result = [];
+
+        foreach ($users as $user) {
+            $result[] = [
+                "id" => $user->getId(),
+                "nome" => $user->getNome(),
+                "idade" => $user->getIdade(),
+            ];
+        }
+
+        return $result;
     }
 
-    public function insertUser($data)
+    public function getUserById($id)
     {
-        array_push($this->users, $data);
-        return $data;
+        $user = $this->userRepository->getById($id);
+        if ($user) {
+            return [
+                'id' => $user->getId(),
+                'nome' => $user->getNome(),
+                'idade' => $user->getIdade()
+            ];
+        }
+        return null;
     }
 
-    public function updateUser($id, $newData)
+    public function createUser($userData)
     {
-        $index = array_search($id, array_column($this->users, 'id'));
-        if ($index)
-            $this->users[$index] = $newData;
+        $user = new User();
+        $user->setNome($userData['nome']);
+        $user->setIdade($userData['idade']);
 
-        return $newData;
+        $createdUser = $this->userRepository->createUser($user);
+
+        return [
+            'id' => $createdUser->getId(),
+            'nome' => $createdUser->getNome(),
+            'idade' => $createdUser->getIdade()
+        ];
+    }
+
+    public function updateUser($id, $userData)
+    {
+        $user = $this->userRepository->getById($id);
+
+        if ($user) {
+            if (isset($userData['nome'])) {
+                $user->setNome($userData['nome']);
+            }
+            if (isset($userData['idade'])) {
+                $user->setIdade($userData['idade']);
+            }
+
+            $updateUser = $this->userRepository->updateUser($user, $user);
+
+            return [
+                'id' => $updateUser->getId(),
+                'nome' => $updateUser->getNome(),
+                'idade' => $updateUser->getIdade()
+            ];
+        }
+
+        return null;
     }
 
     public function deleteUser($id)
     {
-        $findElement = array_search($id, array_column($this->users, 'id'));
-        if ($findElement)
-            array_splice($this->users, $findElement, 1);
-
-        return $findElement;
+        return $this->userRepository->deleteUser($id);
     }
 }
